@@ -22,8 +22,11 @@
 #include <wpi/Path.h>
 #include <wpi/SmallString.h>
 #include "SwerveDrive.hpp"
-//
+
+
 std::shared_ptr<NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
+
+//
 
 using namespace frc;
 
@@ -44,6 +47,9 @@ class Robot : public frc::TimedRobot {
   void TestInit() override;
   void TestPeriodic() override;
 
+  void manualAngleControl();
+
+
   private:
    frc::SendableChooser<std::string> m_chooser;
     const std::string kAutoNameDefault = "Default";
@@ -55,7 +61,11 @@ class Robot : public frc::TimedRobot {
 //CONTROLLER VALUES
     XboxController driveController{0};
     XboxController controlController{1};
-    Joystick arcade {2};
+    Joystick LogitechStick{2};
+    
+    double speedMul = 0;
+
+    //Joystick arcade {2};
 
     bool driveButtonA = driveController.GetAButton();
     bool driveButtonB = driveController.GetBButton();
@@ -68,6 +78,7 @@ class Robot : public frc::TimedRobot {
     bool controlButtonX = controlController.GetXButton();
 
 // 
+
 
 #ifdef PRACTICE
     
@@ -121,13 +132,11 @@ class Robot : public frc::TimedRobot {
 //ACTIONARY MOTORS
     WPI_TalonSRX shooterMotor{15}; 
     WPI_TalonSRX feederMotor{9}; 
-    // WPI_TalonSRX climberMotor{8};  
-    // WPI_TalonSRX elevatorMotor{7};
-    // WPI_TalonSRX intakeMotor{90};//9
-    // WPI_TalonSRX intakeLiftMotor{100};//10
-    // WPI_TalonSRX wheelOfFortuneMotor {11};
-    Servo shooterAngleServoLeft {0};
-    Servo shooterAngleServoRight {1};
+    WPI_TalonSRX intakeMotor{8};//9
+    WPI_TalonSRX intakeLiftMotor{100};//10
+    WPI_TalonSRX wheelOfFortuneMotor {11};
+    Servo shooterAngleServoLeft {5};
+    Servo shooterAngleServoRight {6};
 
 //
 #endif
@@ -165,7 +174,7 @@ class Robot : public frc::TimedRobot {
     double targetDistanceFtArray[6] = {6,5,4,3,2,1};
     double shooterAngleArray[6] = {-1,0,0,0,0,1};
 
-    double shooterAngle = -0.70;//manual control of servo//.7 angle servo init line inner port
+    double shooterAngle = 0.345000;//manual control of servo//.7 angle servo init line inner port
     double shooterAngleTrench = -0.67;//.68 angle servo trench
 //
 
@@ -195,6 +204,15 @@ class Robot : public frc::TimedRobot {
 
     double sensorPos = 0;
    
+		PigeonIMU gyro = (0);
+        //AnalogGyro a_gyro{1};
+
+    double inputX = 0;
+    double inputY = 0;
+    double inputOmega = 0;
+
+    double shooterValue = 0;
+    
 
     SwerveDrive driveTrain;
 

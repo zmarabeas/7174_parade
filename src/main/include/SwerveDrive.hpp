@@ -13,9 +13,13 @@
 #include "ctre/Phoenix.h"
 #include "cmath"
 #include "frc/smartdashboard/Smartdashboard.h"
-
+#include <frc/controller/PIDController.h>
+#include <frc/controller/ProfiledPIDController.h>
+#include "networktables/NetworkTable.h"
+#include "networktables/NetworkTableInstance.h"
 
 using namespace frc;
+
 
 class SwerveDrive  
 {
@@ -43,17 +47,22 @@ class SwerveDrive
 		WPI_TalonSRX backRightDriveMotor = 40;
 		WPI_TalonSRX backRightAngleMotor = 41;
 
-		PigeonIMU gyro = (0);
+		//PigeonIMU gyro = (0);
+
+
+		frc2::PIDController steerPID{0.00675, 0, 0};
+		frc2::PIDController drivePID{1, 0, 0};
+		frc2::PIDController gyroPID{0.045, 0, 0};
+
 
 		double robotWidth = 23.25;
 		double robotLength = 23.25;
 		double z = 0;
 		double ypr[3];
 
-		double rightMod = 0;
-		double leftMod = 0;
+		double gyroMul = 0;
 
-		void drive(double xv, double yv, double omega);
+		void drive(double xv, double yv, double omega, double speedMul);
 		SwerveDrive();
 		~SwerveDrive();
 
@@ -62,5 +71,24 @@ class SwerveDrive
     	double backRightAngle = 0;
     	double backLeftAngle = 0;
 
+		  double robotHeading = 0;
+
+		  double backRightSpeed = 0;
+    double backLeftSpeed = 0;
+    double frontRightSpeed = 0;
+    double frontLeftSpeed = 0;
+
+	double backRightAngleCalc = 0;
+    double backLeftAngleCalc = 0;
+    double frontRightAngleCalc = 0;
+    double frontLeftAngleCalc = 0;
+
+	 double OldbackRightSpeed =0;
+     double OldbackLeftSpeed = 0;
+    double OldfrontRightSpeed = 0;
+    double OldfrontLeftSpeed = 0;
+
+	XboxController controller3{3};
+	double setOmega = 0;
 };
 #endif
